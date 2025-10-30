@@ -4,7 +4,7 @@ module CG_memory_beh #(
   parameter ADDR_WIDTH = 32,
   parameter WORD_NUM   = 1024
 )(
-  CG_memory_interface.from_memory mem_if
+  CG_memory_interface.from_memory if_mem
 );
 
   localparam REAL_ADDR_WIDTH = $clog2(WORD_NUM);
@@ -12,16 +12,16 @@ module CG_memory_beh #(
   logic [DATA_WIDTH-1:0] mem [WORD_NUM-1:0];
 
   always_comb begin
-    mem_if.wready  = 1'b1;
-    mem_if.arready = mem_if.rready;
+    if_mem.wready  = 1'b1;
+    if_mem.arready = if_mem.rready;
   end
 
-  always_ff @(posedge mem_if.clk) begin
-    if (mem_if.wen && mem_if.wvalid) begin
-      mem[mem_if.waddr[REAL_ADDR_WIDTH-1:0]] <= mem_if.wdata;
+  always_ff @(posedge if_mem.clk) begin
+    if (if_mem.wen && if_mem.wvalid) begin
+      mem[if_mem.waddr[REAL_ADDR_WIDTH-1:0]] <= if_mem.wdata;
     end
-    mem_if.rvalid <= mem_if.arvalid;
-    mem_if.rdata  <= mem[mem_if.araddr];
+    if_mem.rvalid <= if_mem.arvalid;
+    if_mem.rdata  <= mem[if_mem.araddr];
   end
 
 endmodule
