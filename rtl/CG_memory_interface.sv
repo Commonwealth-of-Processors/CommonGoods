@@ -1,52 +1,55 @@
 interface CG_memory_interface #(
   parameter DATA_WIDTH = 32,
   parameter ADDR_WIDTH = 32
+)(
+  input logic i_clk,
+  input logic i_rstn
 );
 
-  logic clk;
-  logic rstn;
+  logic                   raddr_valid;
+  logic                   raddr_ready;
+  logic [ADDR_WIDTH-1:0]  raddr;
 
-  logic                   arvalid;
-  logic                   arready;
-  logic [ADDR_WIDTH-1:0]  araddr;
-
-  logic                   rvalid;
-  logic                   rready;
+  logic                   rdata_valid;
+  logic                   rdata_ready;
   logic [DATA_WIDTH-1:0]  rdata;
 
-  logic                   wvalid;
-  logic                   wready;
+  logic                   wdata_valid;
+  logic                   wdata_ready;
   logic                   wen;
   logic [ADDR_WIDTH-1:0]  waddr;
   logic [DATA_WIDTH-1:0]  wdata;
 
   modport to_memory(
-    input  clk,
-    input  rstn,
-    output arvalid,
-    input  arready,
-    output araddr,
-    input  rvalid,
-    output rready,
+    output raddr_valid,
+    input  raddr_ready,
+    output raddr,
+
+    input  rdata_valid,
+    output rdata_ready,
     input  rdata,
-    output wvalid,
-    input  wready,
+
+    output wdata_valid,
+    input  wdata_ready,
     output wen,
     output waddr,
     output wdata
   );
 
   modport from_memory(
-    input  clk,
-    input  rstn,
-    input  arvalid,
-    output arready,
-    input  araddr,
-    output rvalid,
-    input  rready,
+    input  i_clk,
+    input  i_rstn,
+
+    input  raddr_valid,
+    output raddr_ready,
+    input  raddr,
+
+    output rdata_valid,
+    input  rdata_ready,
     output rdata,
-    input  wvalid,
-    output wready,
+
+    input  wdata_valid,
+    output wdata_ready,
     input  wen,
     input  waddr,
     input  wdata
