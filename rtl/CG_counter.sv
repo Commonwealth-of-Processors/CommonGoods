@@ -10,12 +10,13 @@ module CG_counter #(
   output logic [DATA_WIDTH-1:0] o_count
 );
 
-  logic r_rstn;
   logic [DATA_WIDTH-1:0]  w_count;
 
   always_comb begin
-    if(!r_rstn) begin
-      w_count = '0;
+    if (i_prst) begin
+      w_count = i_default;
+    end else if(i_stop) begin
+      w_count = o_count;
     end else begin
       w_count = o_count + 1;
     end
@@ -24,14 +25,9 @@ module CG_counter #(
   always_ff @(posedge i_clk, negedge i_rstn) begin
     if (!i_rstn) begin
       o_count <= '0;
-    end else if (i_prst) begin
-      o_count <= i_default;
-    end else if (i_stop) begin
-      o_count <= o_count;
     end else begin
       o_count <= w_count;
     end
-    r_rstn  <= i_rstn;
   end
 
 endmodule
