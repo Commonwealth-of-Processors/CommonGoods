@@ -1,6 +1,38 @@
 package CG_rvarch_instr_field_pkg;
   parameter INSTR_WIDTH = 32;
 
+  parameter OPCODE_LOAD     = 7'b00_000_11;
+  parameter OPCODE_LOAD_FP  = 7'b00_001_11;
+  parameter OPCODE_CUSTOM_0 = 7'b00_010_11;
+  parameter OPCODE_MISC_MEM = 7'b00_011_11;
+  parameter OPCODE_OP_IMM   = 7'b00_100_11;
+  parameter OPCODE_AUIPC    = 7'b00_101_11;
+  parameter OPCODE_OP_IMM_32= 7'b00_110_11;
+
+  parameter OPCODE_STORE    = 7'b01_000_11;
+  parameter OPCODE_STORE_FP = 7'b01_001_11;
+  parameter OPCODE_CUSTOM_1 = 7'b01_010_11;
+  parameter OPCODE_AMO_FP   = 7'b01_011_11;
+  parameter OPCODE_OP       = 7'b01_100_11;
+  parameter OPCODE_LUI      = 7'b01_101_11;
+  parameter OPCODE_OP_32    = 7'b01_110_11;
+
+  parameter OPCODE_MADD     = 7'b10_000_11;
+  parameter OPCODE_MSUB     = 7'b10_001_11;
+  parameter OPCODE_NMSUB    = 7'b10_010_11;
+  parameter OPCODE_NMADD    = 7'b10_011_11;
+  parameter OPCODE_OP_FP    = 7'b10_100_11;
+  parameter OPCODE_OP_V     = 7'b10_101_11;
+  parameter OPCODE_CUSTOM_2 = 7'b10_110_11;
+
+  parameter OPCODE_BRANCH   = 7'b11_000_11;
+  parameter OPCODE_JALR     = 7'b11_001_11;
+  parameter OPCODE_RESERVED = 7'b11_010_11;
+  parameter OPCODE_JAL      = 7'b11_011_11;
+  parameter OPCODE_SYSTEM   = 7'b11_100_11;
+  parameter OPCODE_OP_VE    = 7'b11_101_11;
+  parameter OPCODE_CUSTOM_3 = 7'b11_110_11;
+
   function automatic [6:0] opcode (input [INSTR_WIDTH-1:0] i_instr);
     opcode = i_instr[6:0];
   endfunction
@@ -63,5 +95,18 @@ package CG_rvarch_instr_field_pkg;
 
   function automatic [63:0] j_imm64 (input [INSTR_WIDTH-1:0] i_instr);
     j_imm64 = 64'(signed'({i_instr[31], i_instr[19:12], i_instr[20], i_instr[30:25], i_instr[24:21], 1'b0}));
+  endfunction
+
+  function automatic is_rd_opcode (input [INSTR_WIDTH-1:0] i_instr);
+    case(opcode(i_instr))
+      OPCODE_LOAD   : is_rd_opcode  = 1'b1;
+      OPCODE_OP_IMM : is_rd_opcode  = 1'b1;
+      OPCODE_AUIPC  : is_rd_opcode  = 1'b1;
+      OPCODE_OP     : is_rd_opcode  = 1'b1;
+      OPCODE_LUI    : is_rd_opcode  = 1'b1;
+      OPCODE_JAL    : is_rd_opcode  = 1'b1;
+      OPCODE_JALR   : is_rd_opcode  = 1'b1;
+      default       : is_rd_opcode  = 1'b0;
+    endcase
   endfunction
 endpackage
