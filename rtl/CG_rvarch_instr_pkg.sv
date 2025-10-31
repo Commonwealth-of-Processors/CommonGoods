@@ -109,4 +109,11 @@ package CG_rvarch_instr_field_pkg;
       default       : is_rd_opcode  = 1'b0;
     endcase
   endfunction
+
+  function automatic is_branch_opcode (input [INSTR_WIDTH-1:0] i_instr);
+    case(opcode(i_instr))
+      OPCODE_BRANCH : is_branch_opcode  = 1'b1;
+      default       : is_branch_opcode  = 1'b0;
+    endcase
+  endfunction
 endpackage
