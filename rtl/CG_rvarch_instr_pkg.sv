@@ -6,23 +6,23 @@ package CG_rvarch_instr_field_pkg;
   endfunction
 
   function automatic [4:0] rd (input [INSTR_WIDTH-1:0] i_instr);
-    opcode = i_instr[11:7];
+    rd = i_instr[11:7];
   endfunction
 
   function automatic [2:0] funct3 (input [INSTR_WIDTH-1:0] i_instr);
-    opcode = i_instr[14:12];
+    funct3 = i_instr[14:12];
   endfunction
 
   function automatic [4:0] rs1 (input [INSTR_WIDTH-1:0] i_instr);
-    opcode = i_instr[19:15];
+    rs1 = i_instr[19:15];
   endfunction
 
   function automatic [4:0] rs2 (input [INSTR_WIDTH-1:0] i_instr);
-    opcode = i_instr[24:20];
+    rs2 = i_instr[24:20];
   endfunction
 
   function automatic [6:0] funct7 (input [INSTR_WIDTH-1:0] i_instr);
-    opcode = i_instr[31:25];
+    funct7 = i_instr[31:25];
   endfunction
 
   function automatic [31:0] i_imm32 (input [INSTR_WIDTH-1:0] i_instr);
