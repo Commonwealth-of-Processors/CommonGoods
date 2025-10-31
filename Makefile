@@ -7,7 +7,7 @@ CG_memory_beh_tb:
 	cd obj_dir ; ./VCG_memory_beh_tb
 
 view:
-	gtkwave ./obj_dir/wave.vcd
+	gtkwave -A --rcvar 'fontname_signals Monospace 16' --rcvar 'fontname_waves Monospace 15' ./obj_dir/wave.vcd
 
 clean:
 	rm -r obj_dir
