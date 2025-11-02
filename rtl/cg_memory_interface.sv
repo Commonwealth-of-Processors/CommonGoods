@@ -1,4 +1,4 @@
-interface CG_memory_interface #(
+interface cg_memory_interface #(
   parameter DATA_WIDTH = 32,
   parameter ADDR_WIDTH = 32
 )(

@@ -1,5 +1,5 @@
 `default_nettype none
-module CG_adder #(
+module cg_adder #(
   parameter DATA_WIDTH  = 32
 )(
   input  logic [DATA_WIDTH-1:0] i_data_rhs,

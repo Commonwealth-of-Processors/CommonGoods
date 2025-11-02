@@ -1,5 +1,5 @@
 `default_nettype none
-module CG_shifter_logical_left #(
+module cg_shifter_logical_right #(
   parameter DATA_WIDTH  = 32
 )(
   input  logic [DATA_WIDTH-1:0] i_data_lhs,
@@ -8,7 +8,7 @@ module CG_shifter_logical_left #(
 );
 
   always_comb begin
-    o_data = i_data_lhs << i_data_rhs;
+    o_data = i_data_lhs >> i_data_rhs;
   end
 
 endmodule

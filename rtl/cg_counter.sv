@@ -1,5 +1,5 @@
 `default_nettype none
-module CG_counter #(
+module cg_counter #(
   parameter DATA_WIDTH = 32
 )(
   input  logic i_clk,

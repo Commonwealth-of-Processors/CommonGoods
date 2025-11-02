@@ -1,10 +1,10 @@
 `default_nettype none
-module CG_memory_beh #(
+module cg_memory_beh #(
   parameter DATA_WIDTH = 32,
   parameter ADDR_WIDTH = 32,
   parameter WORD_NUM   = 1024
 )(
-  CG_memory_interface.from_memory if_mem
+  cg_memory_interface.from_memory if_mem
 );
 
   localparam REAL_ADDR_WIDTH = $clog2(WORD_NUM);

@@ -1,5 +1,5 @@
 `default_nettype none
-module CG_rvarch_regfile #(
+module cg_rvarch_regfile #(
   parameter DATA_WIDTH  = 32,
   parameter DATA_NUM    = 32
 )(

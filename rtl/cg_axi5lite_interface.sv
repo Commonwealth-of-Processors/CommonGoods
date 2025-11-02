@@ -1,4 +1,4 @@
-interface CG_axi5lite_interface #(
+interface cg_axi5lite_interface #(
   parameter DATA_WIDTH  = 32,
   parameter ADDR_WIDTH  = 32
 );

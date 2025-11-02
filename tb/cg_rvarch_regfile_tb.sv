@@ -1,4 +1,4 @@
-module CG_rvarch_regfile_tb;
+module cg_rvarch_regfile_tb;
 
   logic         i_clk = 0;
   logic [4:0]   i_rs1_addr;
@@ -18,7 +18,7 @@ module CG_rvarch_regfile_tb;
     $dumpvars(0, DUT);
   end
 
-  CG_rvarch_regfile #(
+  cg_rvarch_regfile #(
     .DATA_WIDTH (32),
     .DATA_NUM   (32)
   ) DUT (

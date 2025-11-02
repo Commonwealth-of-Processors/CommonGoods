@@ -1,4 +1,4 @@
-package CG_rvarch_instr_field_pkg;
+package cg_rvarch_instr_field_pkg;
   parameter INSTR_WIDTH = 32;
 
   parameter OPCODE_LOAD     = 7'b00_000_11;
@@ -116,6 +116,28 @@ package CG_rvarch_instr_field_pkg;
       OPCODE_STORE  : is_imm_opcode = 1'b1;
       OPCODE_OP_IMM : is_imm_opcode = 1'b1;
       default       : is_imm_opcode = 1'b0;
+    endcase
+  endfunction
+
+  function automatic is_load_opcode(input [INSTR_WIDTH-1:0] i_instr);
+    case(opcode(i_instr))
+      OPCODE_LOAD   : is_load_opcode = 1'b1;
+      default       : is_load_opcode = 1'b0;
+    endcase
+  endfunction
+
+  function automatic is_store_opcode();
+    case(opcode(i_instr))
+      OPCODE_STORE  : is_store_opcode = 1'b1;
+      default       : is_store_opcode = 1'b0;
+    endcase
+  endfunction
+
+  function automatic is_jump_opcode();
+    case(opcode(i_instr))
+      OPCODE_JALR   : is_jump_opcode  = 1'b1;
+      OPCODE_JAL    : is_jump_opcode  = 1'b1;
+      default       : is_jump_opcode  = 1'b0;
     endcase
   endfunction
 

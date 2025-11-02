@@ -1,8 +1,8 @@
-module CG_memory_beh_tb;
+module cg_memory_beh_tb;
 
   logic i_clk = 0;
 
-  CG_memory_interface #(
+  cg_memory_interface #(
     .DATA_WIDTH (32 ),
     .ADDR_WIDTH (32 )
   ) if_mem (
@@ -19,7 +19,7 @@ module CG_memory_beh_tb;
     $dumpvars(0, DUT);
   end
 
-  CG_memory_beh #(
+  cg_memory_beh #(
     .DATA_WIDTH (32   ),
     .ADDR_WIDTH (32   ),
     .WORD_NUM   (1024 )

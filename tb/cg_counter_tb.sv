@@ -1,4 +1,4 @@
-module CG_counter_tb;
+module cg_counter_tb;
 
   logic i_clk   = 0;
   logic i_rstn  = 1;
@@ -7,7 +7,7 @@ module CG_counter_tb;
   logic [31:0]  i_default = 32'h0404_0202;
   logic [31:0]  w_count;
 
-  CG_counter  #(
+  cg_counter  #(
     .DATA_WIDTH (32 )
   ) if_mem (
     .i_clk      (i_clk  ),

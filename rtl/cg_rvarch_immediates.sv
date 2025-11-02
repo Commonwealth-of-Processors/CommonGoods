@@ -1,5 +1,5 @@
 `default_nettype none
-module CG_rvarch_immediates #(
+module cg_rvarch_immediates #(
   parameter INSTR_WIDTH = 32,
   parameter DATA_WIDTH  = 32
 )(
