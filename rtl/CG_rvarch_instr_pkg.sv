@@ -57,44 +57,32 @@ package CG_rvarch_instr_field_pkg;
     funct7 = i_instr[31:25];
   endfunction
 
-  function automatic [31:0] i_imm32 (input [INSTR_WIDTH-1:0] i_instr);
-    i_imm32 = 32'(signed'({i_instr[31], i_instr[30:25], i_instr[24:21], i_instr[20]}));
+  function automatic [31:0] i_imm (input [INSTR_WIDTH-1:0] i_instr);
+    i_imm = 32'(signed'({i_instr[31], i_instr[30:25], i_instr[24:21], i_instr[20]}));
   endfunction
   
-  function automatic [31:0] s_imm32 (input [INSTR_WIDTH-1:0] i_instr);
-    s_imm32 = 32'(signed'({i_instr[31], i_instr[30:25], i_instr[11:8], i_instr[7]}));
+  function automatic [31:0] s_imm (input [INSTR_WIDTH-1:0] i_instr);
+    s_imm = 32'(signed'({i_instr[31], i_instr[30:25], i_instr[11:8], i_instr[7]}));
   endfunction
 
-  function automatic [31:0] b_imm32 (input [INSTR_WIDTH-1:0] i_instr);
-    b_imm32 = 32'(signed'({i_instr[31], i_instr[7], i_instr[30:25], i_instr[11:8], 1'b0}));
+  function automatic [31:0] b_imm (input [INSTR_WIDTH-1:0] i_instr);
+    b_imm = 32'(signed'({i_instr[31], i_instr[7], i_instr[30:25], i_instr[11:8], 1'b0}));
   endfunction
 
-  function automatic [31:0] u_imm32 (input [INSTR_WIDTH-1:0] i_instr);
-    u_imm32 = 32'(signed'({i_instr[31], i_instr[30:20], i_instr[19:12], 11'b000_0000_0000}));
+  function automatic [31:0] u_imm (input [INSTR_WIDTH-1:0] i_instr);
+    u_imm = 32'(signed'({i_instr[31], i_instr[30:20], i_instr[19:12], 11'b000_0000_0000}));
   endfunction
 
-  function automatic [31:0] j_imm32 (input [INSTR_WIDTH-1:0] i_instr);
-    j_imm32 = 32'(signed'({i_instr[31], i_instr[19:12], i_instr[20], i_instr[30:25], i_instr[24:21], 1'b0}));
+  function automatic [31:0] j_imm (input [INSTR_WIDTH-1:0] i_instr);
+    j_imm = 32'(signed'({i_instr[31], i_instr[19:12], i_instr[20], i_instr[30:25], i_instr[24:21], 1'b0}));
   endfunction
 
-  function automatic [63:0] i_imm64 (input [INSTR_WIDTH-1:0] i_instr);
-    i_imm64 = 64'(signed'({i_instr[31], i_instr[30:25], i_instr[24:21], i_instr[20]}));
+  function automatic [63:0] signextend_32to64 (input [31:0] i_32);
+    signextend_32to64 = 64'(signed'(i_32));
   endfunction
 
-  function automatic [63:0] s_imm64 (input [INSTR_WIDTH-1:0] i_instr);
-    s_imm64 = 64'(signed'({i_instr[31], i_instr[30:25], i_instr[11:8], i_instr[7]}));
-  endfunction
-
-  function automatic [63:0] b_imm64 (input [INSTR_WIDTH-1:0] i_instr);
-    b_imm64 = 64'(signed'({i_instr[31], i_instr[7], i_instr[30:25], i_instr[11:8], 1'b0}));
-  endfunction
-
-  function automatic [63:0] u_imm64 (input [INSTR_WIDTH-1:0] i_instr);
-    u_imm64 = 64'(signed'({i_instr[31], i_instr[30:20], i_instr[19:12], 11'b000_0000_0000}));
-  endfunction
-
-  function automatic [63:0] j_imm64 (input [INSTR_WIDTH-1:0] i_instr);
-    j_imm64 = 64'(signed'({i_instr[31], i_instr[19:12], i_instr[20], i_instr[30:25], i_instr[24:21], 1'b0}));
+  function automatic [63:0] zeroextend_32to64 (input [31:0] i_32);
+    zeroextend_32to64 = 64'(unsigned'(i_32));
   endfunction
 
   function automatic is_rd_opcode (input [INSTR_WIDTH-1:0] i_instr);
@@ -114,6 +102,34 @@ package CG_rvarch_instr_field_pkg;
     case(opcode(i_instr))
       OPCODE_BRANCH : is_branch_opcode  = 1'b1;
       default       : is_branch_opcode  = 1'b0;
+    endcase
+  endfunction
+
+  function automatic is_imm_opcode(input [INSTR_WIDTH-1:0] i_instr);
+    case(opcode(i_instr))
+      OPCODE_LUI    : is_imm_opcode = 1'b1;
+      OPCODE_AUIPC  : is_imm_opcode = 1'b1;
+      OPCODE_JAL    : is_imm_opcode = 1'b1;
+      OPCODE_JALR   : is_imm_opcode = 1'b1;
+      OPCODE_BRANCH : is_imm_opcode = 1'b1;
+      OPCODE_LOAD   : is_imm_opcode = 1'b1;
+      OPCODE_STORE  : is_imm_opcode = 1'b1;
+      OPCODE_OP_IMM : is_imm_opcode = 1'b1;
+      default       : is_imm_opcode = 1'b0;
+    endcase
+  endfunction
+
+  function automatic [31:0] get_imm (input [INSTR_WIDTH-1:0] i_instr);
+    case(opcode(i_instr))
+      OPCODE_LUI    : get_imm = u_imm(i_instr);
+      OPCODE_AUIPC  : get_imm = u_imm(i_instr);
+      OPCODE_JAL    : get_imm = j_imm(i_instr);
+      OPCODE_JALR   : get_imm = i_imm(i_instr);
+      OPCODE_BRANCH : get_imm = b_imm(i_instr);
+      OPCODE_LOAD   : get_imm = i_imm(i_instr);
+      OPCODE_STORE  : get_imm = s_imm(i_instr);
+      OPCODE_OP_IMM : get_imm = i_imm(i_instr);
+      default       : get_imm = '0;
     endcase
   endfunction
 endpackage
