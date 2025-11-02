@@ -33,6 +33,15 @@ package cg_rvarch_instr_field_pkg;
   parameter OPCODE_OP_VE    = 7'b11_101_11;
   parameter OPCODE_CUSTOM_3 = 7'b11_110_11;
 
+  parameter FUNCT3_ADD_SUB  = 3'b000;
+  parameter FUNCT3_SLL      = 3'b001;
+  parameter FUNCT3_SLT      = 3'b010;
+  parameter FUNCT3_SLTU     = 3'b011;
+  parameter FUNCT3_XOR      = 3'b100;
+  parameter FUNCT3_SRL_SRA  = 3'b101;
+  parameter FUNCT3_OR       = 3'b110;
+  parameter FUNCT3_AND      = 3'b111;
+
   function automatic [6:0] opcode (input [INSTR_WIDTH-1:0] i_instr);
     opcode = i_instr[6:0];
   endfunction
