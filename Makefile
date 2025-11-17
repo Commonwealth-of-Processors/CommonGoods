@@ -10,6 +10,10 @@ cg_counter_tb:
 	verilator --binary --trace --top-module cg_counter_tb ./rtl/cg_counter.sv ./tb/cg_counter_tb.sv
 	cd obj_dir ; ./Vcg_counter_tb
 
+cg_priority_encoder_tb:
+	verilator --binary --trace --top-module cg_priority_encoder_tb ./rtl/cg_priority_encoder.sv ./tb/cg_priority_encoder_tb.sv
+	cd obj_dir ; ./Vcg_priority_encoder_tb
+
 view:
 	gtkwave -A --rcvar 'fontname_signals Monospace 16' --rcvar 'fontname_waves Monospace 15' ./obj_dir/wave.vcd
 
