@@ -80,7 +80,7 @@ module cg_tlb_fullyassociative #(
   cg_priority_encoder #(
     .BITS_WIDTH (ENTRY_NUM  )
   ) gen_invalid_index (
-    .i_bits (r_valid_array      ),
+    .i_bits (~r_valid_array     ),
     .o_index(w_invalid_index    ),
     .o_en   (w_invalid_index_en )
   );
@@ -110,7 +110,7 @@ module cg_tlb_fullyassociative #(
         if (w_invalid_index_en) begin
           r_valid_array[w_invalid_index]  <= 1'b1;
         end else if (w_lru_index_en) begin
-          r_valid_array[w_invalid_index]  <= 1'b1;
+          r_valid_array[w_lru_index]  <= 1'b1;
         end
       end
     end

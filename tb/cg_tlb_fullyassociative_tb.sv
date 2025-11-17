@@ -14,17 +14,25 @@ module cg_tlb_fullyassociative_tb;
   logic [PADDR_WIDTH-1:0]  o_paddr;
 
   // PTW Interface
-  logic o_tlb_miss;
+  logic                    o_tlb_miss;
+  logic [VADDR_WIDTH-1:0]  o_tlb_miss_vaddr;
+  logic                    i_ptw_valid;
+  logic [PADDR_WIDTH-1:0]  i_ptw_paddr;
 
   cg_tlb_fullyassociative DUT (
     .i_clk  (i_clk  ),
     .i_rstn (i_rstn ),
-    .i_vaddr_valid  (i_vaddr_valid  ),
-    .i_vaddr        (i_vaddr        ),
-    .i_asid         ('0),
-    .o_paddr_valid  (),
-    .o_paddr        (),
-    .o_tlb_miss     ()
+
+    .i_vaddr_valid    (i_vaddr_valid  ),
+    .i_vaddr          (i_vaddr        ),
+    .i_asid           ('0),
+    .o_paddr_valid    (o_paddr_valid  ),
+    .o_paddr          (o_paddr        ),
+
+    .o_tlb_miss       (o_tlb_miss     ),
+    .o_tlb_miss_vaddr (o_tlb_miss_vaddr),
+    .i_ptw_valid      (i_ptw_valid    ),
+    .i_ptw_paddr      (i_ptw_paddr    )
   );
 
   always #1 begin
@@ -39,14 +47,21 @@ module cg_tlb_fullyassociative_tb;
   initial begin
     i_rstn  = 1'b1;
     i_vaddr_valid = 1'b0;
+    i_ptw_valid   = 1'b0;
     #2
     i_rstn  = 1'b0;
     #2
     i_rstn  = 1'b1;
     #2
     i_vaddr_valid = 1'b1;
-    i_vaddr       = '1;
+    i_vaddr       = 39'h0be_efca_fe14;
     #20
+    i_ptw_valid   = 1'b1;
+    i_ptw_paddr   = 56'hca_feca_5151_8000;
+    #2
+    i_ptw_valid   = 1'b0;
+    i_ptw_paddr   = '0;
+    #10
     $finish;
   end
 
