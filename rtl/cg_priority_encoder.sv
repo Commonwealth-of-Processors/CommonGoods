@@ -12,10 +12,9 @@ module cg_priority_encoder #(
   always_comb begin
     o_index = '0;
     o_en    = '0;
-    for(int i = BITS_WIDTH-1; i >= 0; i--) begin
+    for(int i = 0; BITS_WIDTH > i; i = i + 1) begin
       if (i_bits[i]) begin
         o_index = i[INDEX_WIDTH-1:0];
-        break;
       end
     end
     o_en = |i_bits;
