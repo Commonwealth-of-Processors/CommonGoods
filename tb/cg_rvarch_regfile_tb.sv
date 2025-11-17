@@ -14,7 +14,7 @@ module cg_rvarch_regfile_tb;
   end
 
   initial begin
-    $dumpfile("wave.vcd");
+    $dumpfile("wave.fst");
     $dumpvars(0, DUT);
   end
 

@@ -23,7 +23,7 @@ module cg_counter_tb;
   end
 
   initial begin
-    $dumpfile("wave.vcd");
+    $dumpfile("wave.fst");
     $dumpvars(0, DUT);
   end
 

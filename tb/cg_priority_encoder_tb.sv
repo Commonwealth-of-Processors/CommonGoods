@@ -11,7 +11,7 @@ module cg_priority_encoder_tb;
   );
 
   initial begin
-    $dumpfile("wave.vcd");
+    $dumpfile("wave.fst");
     $dumpvars(0, DUT);
   end
 

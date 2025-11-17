@@ -40,7 +40,7 @@ module cg_tlb_fullyassociative_tb;
   end
 
   initial begin
-    $dumpfile("wave.vcd");
+    $dumpfile("wave.fst");
     $dumpvars(0, DUT);
   end
 
@@ -61,6 +61,24 @@ module cg_tlb_fullyassociative_tb;
     #2
     i_ptw_valid   = 1'b0;
     i_ptw_paddr   = '0;
+    #2
+    i_vaddr_valid = 1'b0;
+    i_vaddr       = '0;
+    #2
+    i_vaddr_valid = 1'b1;
+    i_vaddr       = 39'h0be_efca_fe14;
+    #2
+    i_vaddr_valid = 1'b0;
+    #4
+    i_vaddr_valid = 1'b1;
+    i_vaddr       = 39'h022_3333_4444;
+    #4
+    i_ptw_valid   = 1'b1;
+    i_ptw_paddr   = 56'h11_1111_1111_1000;
+    #2
+    i_ptw_valid   = 1'b0;
+    i_ptw_paddr   = '0;
+    #2
     #10
     $finish;
   end

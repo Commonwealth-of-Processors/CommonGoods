@@ -15,7 +15,7 @@ module cg_memory_beh_tb;
   end
 
   initial begin
-    $dumpfile("wave.vcd");
+    $dumpfile("wave.fst");
     $dumpvars(0, DUT);
   end
 
