@@ -14,6 +14,10 @@ cg_priority_encoder_tb:
 	verilator --binary --build -j 8 --output-split 15000 --trace --top-module cg_priority_encoder_tb ./rtl/cg_priority_encoder.sv ./tb/cg_priority_encoder_tb.sv
 	cd obj_dir ; ./Vcg_priority_encoder_tb
 
+cg_tlb_fullyassociative_tb:
+	verilator --binary --build -j 8 --output-split 15000 --trace --top-module cg_tlb_fullyassociative_tb ./rtl/cg_priority_encoder.sv ./rtl/cg_tlb_fullyassociative.sv ./tb/cg_tlb_fullyassociative_tb.sv
+	cd obj_dir ; ./Vcg_tlb_fullyassociative_tb
+
 view:
 	gtkwave -A --rcvar 'fontname_signals Monospace 16' --rcvar 'fontname_waves Monospace 15' ./obj_dir/wave.vcd
 
