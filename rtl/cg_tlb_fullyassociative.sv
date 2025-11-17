@@ -19,7 +19,10 @@ module cg_tlb_fullyassociative #(
   output logic [PADDR_WIDTH-1:0]  o_paddr,
 
   // PTW Interface
-  output logic o_tlb_miss
+  output logic                    o_tlb_miss,
+  output logic [VADDR_WIDTH-1:0]  o_tlb_miss_vaddr,
+  input  logic                    i_ptw_valid,
+  input  logic [PADDR_WIDTH-1:0]  i_ptw_paddr
 );
 
   // Arrays
@@ -32,9 +35,20 @@ module cg_tlb_fullyassociative #(
   logic [TAG_WIDTH-1:0]     w_vaddr_tag;
   logic [OFFSET_WIDTH-1:0]  w_vaddr_offset;
 
+  // Hit Entry and Index
   logic [ENTRY_NUM-1:0]         w_hit;
-  logic                         w_pe_en;
+  logic                         w_hit_index_en;
   logic [$clog2(ENTRY_NUM)-1:0] w_hit_index;
+
+  // Invalid Index
+  logic                         w_invalid_index_en;
+  logic [$clog2(ENTRY_NUM)-1:0] w_invalid_index;
+
+  // Bit-LRU
+  logic [ENTRY_NUM-1:0]         w_mru;
+  logic [ENTRY_NUM-1:0]         r_mru;
+  logic                         w_lru_index_en;
+  logic [$clog2(ENTRY_NUM)-1:0] w_lru_index;
 
   always_comb begin
     w_vaddr_tag     = i_vaddr[VADDR_WIDTH-1:VADDR_WIDTH-TAG_WIDTH];
@@ -63,26 +77,75 @@ module cg_tlb_fullyassociative #(
   end 
   endgenerate
 
+  cg_priority_encoder #(
+    .BITS_WIDTH (ENTRY_NUM  )
+  ) gen_invalid_index (
+    .i_bits (r_valid_array      ),
+    .o_index(w_invalid_index    ),
+    .o_en   (w_invalid_index_en )
+  );
+
+  // Bit-LRU
+  always_comb begin
+    if(&(r_mru | w_hit)) begin
+      w_mru = w_hit;
+    end else begin
+      w_mru = r_mru | w_hit;
+    end
+  end
+
+  cg_priority_encoder #(
+    .BITS_WIDTH (ENTRY_NUM  )
+  ) gen_lru_index (
+    .i_bits (~r_mru         ),
+    .o_index(w_lru_index    ),
+    .o_en   (w_lru_index_en )
+  );
+
   always_ff @(posedge i_clk, negedge i_rstn) begin
     if (!i_rstn) begin
       r_valid_array <= '0;
+    end else if (o_tlb_miss) begin
+      if (i_ptw_valid) begin
+        if (w_invalid_index_en) begin
+          r_valid_array[w_invalid_index]  <= 1'b1;
+        end else if (w_lru_index_en) begin
+          r_valid_array[w_invalid_index]  <= 1'b1;
+        end
+      end
     end
   end
 
   // Read PPN Array and Construct PADDR
   always_ff @(posedge i_clk) begin
-    o_paddr         <= {r_ppn_array[w_hit_index], w_vaddr_offset};
-    o_paddr_valid   <= w_pe_en;
-    o_tlb_miss      <= ~w_pe_en & i_vaddr_valid;
+    o_paddr           <= {r_ppn_array[w_hit_index], w_vaddr_offset};
+    o_paddr_valid     <= w_hit_index_en;
+    o_tlb_miss        <= ~w_hit_index_en & i_vaddr_valid;
+    o_tlb_miss_vaddr  <= i_vaddr;
+    r_mru             <= w_mru;
+    if (o_tlb_miss) begin
+      if (i_ptw_valid) begin
+        if (w_invalid_index_en) begin
+          r_tag_array[w_invalid_index]    <= w_vaddr_tag;
+          r_asid_array[w_invalid_index]   <= i_asid;
+          r_ppn_array[w_invalid_index]    <= i_ptw_paddr[PADDR_WIDTH-1:PADDR_WIDTH-PPN_WIDTH];
+        end else if (w_lru_index_en) begin
+          r_tag_array[w_lru_index]        <= w_vaddr_tag;
+          r_asid_array[w_lru_index]       <= i_asid;
+          r_ppn_array[w_lru_index]        <= i_ptw_paddr[PADDR_WIDTH-1:PADDR_WIDTH-PPN_WIDTH];
+        end
+      end
+    end
   end
 
   cg_priority_encoder #(
     .BITS_WIDTH (ENTRY_NUM  )
-  ) priority_encoder (
-    .i_bits (w_hit        ),
-    .o_index(w_hit_index  ),
-    .o_en   (w_pe_en      )
+  ) gen_hit_index (
+    .i_bits (w_hit          ),
+    .o_index(w_hit_index    ),
+    .o_en   (w_hit_index_en )
   );
+
 
 endmodule
 `default_nettype wire
