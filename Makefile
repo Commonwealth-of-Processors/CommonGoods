@@ -11,7 +11,7 @@ cg_counter_tb:
 	cd obj_dir ; ./Vcg_counter_tb
 
 cg_priority_encoder_tb:
-	verilator --binary --trace --top-module cg_priority_encoder_tb ./rtl/cg_priority_encoder.sv ./tb/cg_priority_encoder_tb.sv
+	verilator --binary --build -j 8 --output-split 15000 --trace --top-module cg_priority_encoder_tb ./rtl/cg_priority_encoder.sv ./tb/cg_priority_encoder_tb.sv
 	cd obj_dir ; ./Vcg_priority_encoder_tb
 
 view:
