@@ -6,6 +6,7 @@ module cg_tlb_fullyassociative #(
   parameter PPN_WIDTH     = 44,
   parameter OFFSET_WIDTH  = 12,
   parameter ASID_WIDTH    = 16,
+  parameter ATTR_WIDTH    = 11,
   parameter ENTRY_NUM     = 16
 )(
   input  logic i_clk,
@@ -17,12 +18,14 @@ module cg_tlb_fullyassociative #(
   input  logic [ASID_WIDTH-1:0]   i_asid,
   output logic                    o_paddr_valid,
   output logic [PADDR_WIDTH-1:0]  o_paddr,
+  output logic [ATTR_WIDTH-1:0]   o_pte_attr,
 
   // PTW Interface
   output logic                    o_tlb_miss,
   output logic [VADDR_WIDTH-1:0]  o_tlb_miss_vaddr,
   input  logic                    i_ptw_valid,
-  input  logic [PADDR_WIDTH-1:0]  i_ptw_paddr
+  input  logic [PADDR_WIDTH-1:0]  i_ptw_paddr,
+  input  logic [ATTR_WIDTH-1:0]   i_ptw_pte_attr
 );
 
   // Arrays
@@ -30,6 +33,7 @@ module cg_tlb_fullyassociative #(
   logic [TAG_WIDTH-1:0]   r_tag_array   [ENTRY_NUM-1:0];
   logic [ASID_WIDTH-1:0]  r_asid_array  [ENTRY_NUM-1:0];
   logic [PPN_WIDTH-1:0]   r_ppn_array   [ENTRY_NUM-1:0];
+  logic [ATTR_WIDTH-1:0]  r_pte_attr_array   [ENTRY_NUM-1:0];
 
   // VA Fields
   logic [TAG_WIDTH-1:0]     w_vaddr_tag;
@@ -129,10 +133,12 @@ module cg_tlb_fullyassociative #(
           r_tag_array[w_invalid_index]    <= w_vaddr_tag;
           r_asid_array[w_invalid_index]   <= i_asid;
           r_ppn_array[w_invalid_index]    <= i_ptw_paddr[PADDR_WIDTH-1:PADDR_WIDTH-PPN_WIDTH];
+          r_pte_attr_array[w_invalid_index] <= i_ptw_pte_attr;
         end else if (w_lru_index_en) begin
           r_tag_array[w_lru_index]        <= w_vaddr_tag;
           r_asid_array[w_lru_index]       <= i_asid;
           r_ppn_array[w_lru_index]        <= i_ptw_paddr[PADDR_WIDTH-1:PADDR_WIDTH-PPN_WIDTH];
+          r_pte_attr_array[w_lru_index]   <= i_ptw_pte_attr;
         end
       end
     end
@@ -145,7 +151,6 @@ module cg_tlb_fullyassociative #(
     .o_index(w_hit_index    ),
     .o_en   (w_hit_index_en )
   );
-
 
 endmodule
 `default_nettype wire
