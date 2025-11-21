@@ -68,7 +68,7 @@ module cg_rvarch_sv39_ptw #(
       end
       PROC: begin
         // PTE.V Check
-        if (r_pte[63] == 1'b1) begin
+        if (r_pte[0] == 1'b1) begin
           // Leaf PTE Check
           if (|r_pte[3:1]) begin
             // Calculate PA
