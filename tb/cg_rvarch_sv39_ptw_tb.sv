@@ -27,16 +27,16 @@ module cg_rvarch_sv39_ptw_tb;
     .i_clk  (i_clk  ),
     .i_rstn (i_rstn ),
 
-    .i_satp       (i_satp       ),
-    .o_page_fault (o_page_fault ),
+    .i_satp           (i_satp         ),
+    .o_page_fault     (o_page_fault   ),
 
-    .if_mem       (if_mem ),
+    .if_mem           (if_mem         ),
 
     .i_tlb_miss       (i_tlb_miss     ),
     .i_tlb_miss_vaddr (i_tlb_miss_vaddr),
     .o_ptw_valid      (o_ptw_valid    ),
     .o_ptw_paddr      (o_ptw_paddr    ),
-    .o_ptw_pte_attr   ('0)
+    .o_ptw_pte_attr   ()
   );
 
   always #1 begin
@@ -50,6 +50,38 @@ module cg_rvarch_sv39_ptw_tb;
 
   initial begin
     i_rstn  = 1'b1;
+    if_mem.raddr_ready = 1;
+    if_mem.rdata_valid = 0;
+    if_mem.rdata       = 64'h0000_0000_0000_0000;
+    #2
+    i_rstn  = 1'b0;
+    #2
+    i_rstn  = 1'b1;
+    #2
+    i_tlb_miss  = 1'b1;
+    #2
+    i_tlb_miss  = 1'b0;
+    wait(if_mem.raddr_valid == 1'b1);
+    if_mem.rdata_valid = 1'b1;
+    // L3
+    if_mem.rdata       = 64'h0000_0000_0000_0001;
+    #2
+    if_mem.rdata_valid = 1'b0;
+    #2
+    wait(if_mem.raddr_valid == 1'b1);
+    if_mem.rdata_valid = 1'b1;
+    // L2
+    if_mem.rdata       = 64'h0000_0000_0000_0001;
+    #2
+    if_mem.rdata_valid = 1'b0;
+    #2
+    wait(if_mem.raddr_valid == 1'b1);
+    if_mem.rdata_valid = 1'b1;
+    // L1
+    if_mem.rdata       = 64'h0000_0000_0000_000f;
+    #2
+    if_mem.rdata_valid = 1'b0;
+    #10
     $finish;
   end
 
