@@ -44,9 +44,6 @@ interface cg_memory_interface #(
   );
 
   modport from_memory_ro(
-    input  i_clk,
-    input  i_rstn,
-
     input  raddr_valid,
     output raddr_ready,
     input  raddr,
@@ -57,9 +54,6 @@ interface cg_memory_interface #(
   );
 
   modport from_memory(
-    input  i_clk,
-    input  i_rstn,
-
     input  raddr_valid,
     output raddr_ready,
     input  raddr,
