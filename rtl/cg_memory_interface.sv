@@ -1,10 +1,7 @@
 interface cg_memory_interface #(
   parameter DATA_WIDTH = 32,
   parameter ADDR_WIDTH = 32
-)(
-  input logic i_clk,
-  input logic i_rstn
-);
+)();
 
   logic                   raddr_valid;
   logic                   raddr_ready;
@@ -34,6 +31,29 @@ interface cg_memory_interface #(
     output wen,
     output waddr,
     output wdata
+  );
+
+  modport to_memory_ro(
+    output raddr_valid,
+    input  raddr_ready,
+    output raddr,
+
+    input  rdata_valid,
+    output rdata_ready,
+    input  rdata
+  );
+
+  modport from_memory_ro(
+    input  i_clk,
+    input  i_rstn,
+
+    input  raddr_valid,
+    output raddr_ready,
+    input  raddr,
+
+    output rdata_valid,
+    input  rdata_ready,
+    output rdata
   );
 
   modport from_memory(
