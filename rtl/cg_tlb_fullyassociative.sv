@@ -70,6 +70,7 @@ module cg_tlb_fullyassociative #(
           if (r_asid_array[i] == i_asid) begin
             // TAG Check
             if (r_tag_array[i] == w_vaddr_tag) begin
+              // Hit
               w_hit[i] = 1'b1;
             end else begin
               w_hit[i] = 1'b0;
@@ -81,6 +82,16 @@ module cg_tlb_fullyassociative #(
   end 
   endgenerate
 
+  // Genrate Hit Index
+  cg_priority_encoder #(
+    .BITS_WIDTH (ENTRY_NUM  )
+  ) gen_hit_index (
+    .i_bits (w_hit          ),
+    .o_index(w_hit_index    ),
+    .o_en   (w_hit_index_en )
+  );
+
+  // Generate Unused Index for LRU
   cg_priority_encoder #(
     .BITS_WIDTH (ENTRY_NUM  )
   ) gen_invalid_index (
@@ -89,7 +100,7 @@ module cg_tlb_fullyassociative #(
     .o_en   (w_invalid_index_en )
   );
 
-  // Bit-LRU
+  // Generate MRU history for Bit-PLRU
   always_comb begin
     if(&(r_mru | w_hit)) begin
       w_mru = w_hit;
@@ -98,6 +109,7 @@ module cg_tlb_fullyassociative #(
     end
   end
 
+  // Generate Victim entry Index
   cg_priority_encoder #(
     .BITS_WIDTH (ENTRY_NUM  )
   ) gen_lru_index (
@@ -108,12 +120,16 @@ module cg_tlb_fullyassociative #(
 
   always_ff @(posedge i_clk, negedge i_rstn) begin
     if (!i_rstn) begin
+      // Clear valid bits
       r_valid_array <= '0;
     end else if (o_tlb_miss) begin
+      // Came valid ptw outcome
       if (i_ptw_valid) begin
         if (w_invalid_index_en) begin
+          // Select Invalid Entry
           r_valid_array[w_invalid_index]  <= 1'b1;
         end else if (w_lru_index_en) begin
+          // Select Vimctim Entry
           r_valid_array[w_lru_index]  <= 1'b1;
         end
       end
@@ -130,11 +146,13 @@ module cg_tlb_fullyassociative #(
     if (o_tlb_miss) begin
       if (i_ptw_valid) begin
         if (w_invalid_index_en) begin
+          // Select Invalid Entry
           r_tag_array[w_invalid_index]    <= w_vaddr_tag;
           r_asid_array[w_invalid_index]   <= i_asid;
           r_ppn_array[w_invalid_index]    <= i_ptw_paddr[PADDR_WIDTH-1:PADDR_WIDTH-PPN_WIDTH];
           r_pte_attr_array[w_invalid_index] <= i_ptw_pte_attr;
         end else if (w_lru_index_en) begin
+          // Select Vimctim Entry
           r_tag_array[w_lru_index]        <= w_vaddr_tag;
           r_asid_array[w_lru_index]       <= i_asid;
           r_ppn_array[w_lru_index]        <= i_ptw_paddr[PADDR_WIDTH-1:PADDR_WIDTH-PPN_WIDTH];
@@ -143,14 +161,6 @@ module cg_tlb_fullyassociative #(
       end
     end
   end
-
-  cg_priority_encoder #(
-    .BITS_WIDTH (ENTRY_NUM  )
-  ) gen_hit_index (
-    .i_bits (w_hit          ),
-    .o_index(w_hit_index    ),
-    .o_en   (w_hit_index_en )
-  );
 
 endmodule
 `default_nettype wire

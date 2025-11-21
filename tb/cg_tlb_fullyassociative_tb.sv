@@ -28,11 +28,13 @@ module cg_tlb_fullyassociative_tb;
     .i_asid           ('0),
     .o_paddr_valid    (o_paddr_valid  ),
     .o_paddr          (o_paddr        ),
+    .o_pte_attr       (),
 
     .o_tlb_miss       (o_tlb_miss     ),
     .o_tlb_miss_vaddr (o_tlb_miss_vaddr),
     .i_ptw_valid      (i_ptw_valid    ),
-    .i_ptw_paddr      (i_ptw_paddr    )
+    .i_ptw_paddr      (i_ptw_paddr    ),
+    .i_ptw_pte_attr   ('0)
   );
 
   always #1 begin
