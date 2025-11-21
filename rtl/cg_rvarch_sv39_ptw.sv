@@ -33,11 +33,11 @@ module cg_rvarch_sv39_ptw #(
   logic [1:0] r_pt_lvl;
   logic [1:0] w_pt_lvl;
 
-  logic [ADDR_WIDTH-1:0]  w_target_va;
-  logic [ADDR_WIDTH-1:0]  r_target_va;
+  logic [VADDR_WIDTH-1:0] w_target_va;
+  logic [VADDR_WIDTH-1:0] r_target_va;
 
-  logic [ADDR_WIDTH-1:0]  r_concat_addr;
-  logic [ADDR_WIDTH-1:0]  w_concat_addr;
+  logic [PADDR_WIDTH-1:0] r_concat_addr;
+  logic [PADDR_WIDTH-1:0] w_concat_addr;
 
   logic [DATA_WIDTH-1:0]  w_pte;
   logic [DATA_WIDTH-1:0]  r_pte;
@@ -59,7 +59,7 @@ module cg_rvarch_sv39_ptw #(
           w_pt_lvl      = 2'b11;
           w_target_va   = i_tlb_miss_vaddr;
           // L3 PTE Address
-          w_concat_addr = {i_satp[43:2], r_target_va[40:30], 3'b000};
+          w_concat_addr = {i_satp[43:0], r_target_va[38:30], 3'b000};
         end else begin
           w_state       = IDLE;
           w_ptw_valid   = o_ptw_valid;
@@ -122,7 +122,7 @@ module cg_rvarch_sv39_ptw #(
         w_ptw_pte_attr      = {r_pte[63:61], r_pte[7:0]};
       end
       MEM:  begin
-        if_mem.raddr        = r_concat_addr;
+        if_mem.raddr        = (ADDR_WIDTH)'(r_concat_addr);
         if_mem.raddr_valid  = 1'b1;
         if (if_mem.rdata_valid) begin
           w_state   = PROC;
